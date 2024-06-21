@@ -3,6 +3,7 @@
     "apt-get update && apt-get install -y curl php-cli php-mbstring unzip git",
     "curl -sS https://getcomposer.org/installer | php",
     "mv composer.phar /usr/local/bin/composer",
+    "npm install -g npm",
     "composer install",
     "npm i",
     "npm run build",
