@@ -2,7 +2,8 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "start": "php-fpm -y /app/php-fpm.conf & nginx -c /app/nginx.conf"
     },
     "devDependencies": {
         "axios": "^1.1.2",
