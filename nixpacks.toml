@@ -1,16 +1,14 @@
 [setup]
-  # Definir los paquetes necesarios para la configuración de entorno
   packages = [
-    "php80.withExtensions (pe: pe.enabled ++ [])", 
-    "nginx", 
-    "libmysqlclient", 
-    "php80Packages.composer", 
-    "nodejs_18", 
+    "php80.withExtensions (pe: pe.enabled ++ [])",
+    "nginx",
+    "libmysqlclient",
+    "php80Packages.composer",
+    "nodejs_18",
     "npm-9_x"
   ]
 
 [install]
-  # Comandos para preparar el entorno
   commands = [
     "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
     "composer install --ignore-platform-reqs",
@@ -18,7 +16,6 @@
   ]
 
 [build]
-  # Comandos para construir el proyecto
   commands = [
     "composer install",
     "npm i",
@@ -31,5 +28,4 @@
   ]
 
 [start]
-  # Comando para iniciar la aplicación
   command = "php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
