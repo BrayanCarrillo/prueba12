@@ -1,39 +1,24 @@
 {
-    "name": "specialtactics/laravel-api-boilerplate",
-    "description": "An API boilerplate for Laravel",
-    "keywords": [
-        "laravel",
-        "boilerplate",
-        "api",
-        "api boilerplate",
-        "laravel api"
-    ],
-    "license": "MIT",
+    "name": "laravel/laravel",
     "type": "project",
-    "authors": [
-        {
-            "name": "Max Snow",
-            "email": "contact@maxsnow.me"
-        }
-    ],
+    "description": "The Laravel Framework.",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
-        "fideloper/proxy": "^4.4",
-        "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
-        "laravel/framework": "^8.0",
-        "laravel/tinker": "^2.5",
-        "specialtactics/l5-api": "^3.0"
+        "php": "^8.0.2",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^9.19",
+        "laravel/sanctum": "^3.0",
+        "laravel/tinker": "^2.7"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.9",
-        "beyondcode/laravel-dump-server": "^1.4",
-        "facade/ignition": "^2.7",
         "fakerphp/faker": "^1.9.1",
-        "mockery/mockery": "^1.4.1",
-        "nunomaduro/collision": "^5.0",
-        "phpunit/phpunit": "^9.3.3",
-        "laravel/telescope": "^4.4"
+        "laravel/pint": "^1.0",
+        "laravel/sail": "^1.0.1",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^6.1",
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -52,32 +37,29 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
-            "@php artisan jwt:secret"
-        ],
-        "test": "./vendor/bin/phpunit --colors=always -v --testdox",
-        "lint": "./vendor/bin/phpcs",
-        "docs": [
-            "@php artisan ide-helper:generate --no-interaction"
-        ],
-        "build": "./env/build.sh"
+            "@php artisan key:generate --ansi"
+        ]
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-                "laravel/telescope"
-            ]
+            "dont-discover": []
         }
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
