@@ -12,21 +12,17 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     locales \
     zip \
-    jpegoptim optipng pngquant gifsicle \
+    jpegoptim \
+    optipng \
+    pngquant \
+    gifsicle \
     vim \
     unzip \
     git \
     curl \
-    && docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# Limpiar el caché de apt
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Copiar el archivo de configuración de Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copiar los archivos de la aplicación al contenedor
 COPY . /var/www
@@ -34,8 +30,8 @@ COPY . /var/www
 # Establecer permisos adecuados
 RUN chown -R www-data:www-data /var/www
 
-# Exponer el puerto 80
-EXPOSE 80
+# Exponer el puerto 9000 para PHP-FPM
+EXPOSE 9000
 
 # Comando por defecto para iniciar PHP-FPM
 CMD ["php-fpm"]
