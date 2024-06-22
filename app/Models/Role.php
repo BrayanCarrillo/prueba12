@@ -2,10 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Role extends Model
+class Role extends BaseModel
 {
-    protected $table = 'tbl_role';
-    public $timestamps = false;
+    /**
+     * Role constants
+     */
+    public const ROLE_ADMIN = 'admin';
+
+    /**
+     * @var int Auto increments integer key
+     */
+    public $primaryKey = 'role_id';
+
+    /**
+     * @var string UUID key
+     */
+    public $uuidKey = 'role_uuid';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'description',
+    ];
 }

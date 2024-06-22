@@ -1,43 +1,91 @@
-version: '3.8'
+version: '3.7'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    environment:
-      - APP_NAME=Laravel
-      - APP_ENV=production
-      - APP_KEY=base64:lfR2yfMevOe9zQHCT/n69F4wIgVuhf3L7yFI5ic0lSM=
-      - APP_DEBUG=false
-      - APP_URL=http://tudominio.com
-      - LOG_CHANNEL=stack
-      - LOG_LEVEL=debug
-      - BROADCAST_DRIVER=log
-      - CACHE_DRIVER=file
-      - FILESYSTEM_DISK=local
-      - QUEUE_CONNECTION=sync
-      - SESSION_DRIVER=file
-      - SESSION_LIFETIME=120
-      - REDIS_HOST=127.0.0.1
-      - REDIS_PASSWORD=null
-      - REDIS_PORT=6379
-      - AWS_ACCESS_KEY_ID=
-      - AWS_SECRET_ACCESS_KEY=
-      - AWS_DEFAULT_REGION=us-east-1
-      - AWS_BUCKET=
-      - AWS_USE_PATH_STYLE_ENDPOINT=false
-      - PUSHER_APP_ID=
-      - PUSHER_APP_KEY=
-      - PUSHER_APP_SECRET=
-      - PUSHER_HOST=
-      - PUSHER_PORT=443
-      - PUSHER_SCHEME=https
-      - PUSHER_APP_CLUSTER=mt1
-      - VITE_PUSHER_APP_KEY=${PUSHER_APP_KEY}
-      - VITE_PUSHER_HOST=${PUSHER_HOST}
-      - VITE_PUSHER_PORT=${PUSHER_PORT}
-      - VITE_PUSHER_SCHEME=${PUSHER_SCHEME}
-      - VITE_PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER}
+
+# Workspace Container
+    workspace:
+      container_name: your_project_workspace
+      build:
+        context: ./env/docker/workspace
+        args:
+          - PHP_VERSION=${PHP_VERSION}
+          - PHP_XDEBUG_ENABLE=${PHP_XDEBUG_ENABLE}
+          - PHP_XDEBUG_VERSION=${PHP_XDEBUG_VERSION}
+          - PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK}
+          - COMPOSER_PROCESS_TIMEOUT=${COMPOSER_PROCESS_TIMEOUT}
+      volumes:
+        - ./:/var/www:cached
+        - ~/.ssh:/home/laradock/.ssh
+        - ~/.gitconfig:/home/laradock/.gitconfig
+        - ~/.config/composer:/home/laradock/.config/composer
+        - ~/.aws:/home/laradock/.aws
+      tty: true
+      networks:
+        - your_project_network
+
+# PHP-FPM
+    php-fpm:
+      container_name: your_project_php_fpm
+      build:
+        context: ./env/docker/php-fpm
+        args:
+          - PHP_VERSION=${PHP_VERSION}
+          - PHP_XDEBUG_ENABLE=${PHP_XDEBUG_ENABLE}
+          - PHP_XDEBUG_VERSION=${PHP_XDEBUG_VERSION}
+          - PHP_XDEBUG_REMOTE_CONNECT_BACK=${PHP_XDEBUG_REMOTE_CONNECT_BACK}
+      volumes:
+        - ./:/var/www:cached
+      depends_on:
+        - workspace
+      networks:
+        - your_project_network
+
+# NGINX
+    nginx:
+      container_name: your_project_nginx
+      build:
+        context: ./env/docker/nginx
+      volumes:
+        - ./:/var/www:cached
+        - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
+      depends_on:
+        - php-fpm
+        - postgres
+      environment:
+        - HTTPS_METHOD=${HTTPS_METHOD}
+      ports:
+        - 80:80
+      networks:
+        - your_project_network
+
+# PostgreSQL
+    postgres:
+      container_name: your_project_postgres
+      build:
+        context: ./env/docker/postgres
+      volumes:
+        - ${DATA_PATH_HOST}postgres:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      networks:
+        - your_project_network
+
+# Redis
+    redis:
+      container_name: your_project_redis
+      image: "redis"
+      hostname: your_project_redis
+      networks:
+        - your_project_network
+
+# Volumes configuration
+volumes:
+  postgres:
+    driver: "local"
+
+# Network configuration
+networks:
+  your_project_network:
+    name: your_project_network
