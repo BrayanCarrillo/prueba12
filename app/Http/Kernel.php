@@ -1,8 +1,11 @@
+
 protected $middleware = [
     // Otros middlewares...
     \App\Http\Middleware\CorsMiddleware::class,
     \App\Http\Middleware\VerifyCsrfToken::class,
+    \App\Http\Middleware\Cors::class,
 ];
+
 
 protected $middlewareGroups = [
     'web' => [
@@ -15,3 +18,4 @@ protected $middlewareGroups = [
         \App\Http\Middleware\VerifyCsrfToken::class,
     ],
 ];
+
