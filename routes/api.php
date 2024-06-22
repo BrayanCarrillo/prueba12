@@ -21,14 +21,6 @@ use App\Http\Controllers\ContrasenaController;
 use App\Http\Controllers\ChefController;
 use App\Http\Controllers\ConsultasController;
 
-
-
-Route::options('{any}', function (Request $request) {
-    return response('', 200)->header('Access-Control-Allow-Origin', '*')
-                            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-})->where('any', '.*');
-
 //cambiar nombre empleado 
 Route::put('/empleados/{id}/actualizar-nombre', [EmployeeController::class, 'actualizarNombreEmpleado']);
 //login capcha
