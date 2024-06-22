@@ -6,6 +6,10 @@ protected $middleware = [
     \App\Http\Middleware\Cors::class,
 ];
 
+protected $middleware = [
+    // ...
+    \App\Http\Middleware\Cors::class,
+];
 
 protected $middlewareGroups = [
     'web' => [
