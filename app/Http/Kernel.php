@@ -1,6 +1,7 @@
 protected $middleware = [
-    // Otros middleware...
+    // Otros middlewares...
     \App\Http\Middleware\CorsMiddleware::class,
+    \App\Http\Middleware\VerifyCsrfToken::class,
 ];
 
 protected $middlewareGroups = [
