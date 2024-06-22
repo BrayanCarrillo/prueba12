@@ -1,9 +1,25 @@
-[build]
+[setup]
+  # Definir los paquetes necesarios para la configuración de entorno
+  packages = [
+    "php80.withExtensions (pe: pe.enabled ++ [])", 
+    "nginx", 
+    "libmysqlclient", 
+    "php80Packages.composer", 
+    "nodejs_18", 
+    "npm-9_x"
+  ]
+
+[install]
+  # Comandos para preparar el entorno
   commands = [
-    "apt-get update && apt-get install -y curl php-cli php-mbstring unzip git",
-    "curl -sS https://getcomposer.org/installer | php",
-    "mv composer.phar /usr/local/bin/composer",
-    "npm install -g npm",
+    "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
+    "composer install --ignore-platform-reqs",
+    "npm i"
+  ]
+
+[build]
+  # Comandos para construir el proyecto
+  commands = [
     "composer install",
     "npm i",
     "npm run build",
@@ -15,4 +31,5 @@
   ]
 
 [start]
+  # Comando para iniciar la aplicación
   command = "php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
