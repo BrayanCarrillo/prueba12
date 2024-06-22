@@ -41,7 +41,8 @@ Route::get('/', function () {
 });
 
 // Rutas de autenticación
-Route::match(['get', 'post'], '/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->middleware('auth:sanctum');
+
 
 // Controladores adicionales
 Route::get('/backup', [BackupController::class, 'createBackup']);
