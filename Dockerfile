@@ -1,49 +1,41 @@
-# Utiliza una imagen base de PHP con Apache
+# Use the official PHP image as the base image
 FROM php:8.1-fpm
 
-# Instala las dependencias del sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    nginx
-
-# Instala las extensiones de PHP necesarias
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# Instala Node.js y npm
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs npm
-
-# Verifica la instalación de Node.js y npm
-RUN node -v && npm -v
-
-# Instala Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Establece el directorio de trabajo
+# Set working directory
 WORKDIR /var/www
 
-# Copia los archivos de la aplicación al contenedor
-COPY . .
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl
 
-# Instala las dependencias de PHP
-RUN composer install --no-dev --optimize-autoloader
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instala las dependencias de Node.js y construye los activos
-RUN npm install && npm run build
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Copia la configuración de Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Exponer el puerto 80
-EXPOSE 80
+# Copy existing application directory contents
+COPY . /var/www
 
-# Comando para iniciar Nginx y PHP-FPM
-CMD service php8.1-fpm start && nginx -g 'daemon off;'
+# Copy existing application directory permissions
+COPY --chown=www-data:www-data . /var/www
+
+# Change current user to www
+USER www-data
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
