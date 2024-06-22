@@ -1,4 +1,4 @@
-# Utiliza una imagen base de PHP con FPM
+# Utiliza una imagen base de PHP con Apache
 FROM php:8.1-fpm
 
 # Instala las dependencias del sistema
@@ -17,6 +17,10 @@ RUN apt-get update && apt-get install -y \
 # Instala las extensiones de PHP necesarias
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
+# Instala Node.js y npm
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs
+
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -30,10 +34,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Instala las dependencias de Node.js y construye los activos
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install && \
-    npm run build
+RUN npm install && npm run build
 
 # Copia la configuración de Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
