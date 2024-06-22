@@ -1,10 +1,10 @@
-# Use the official PHP image as the base image
+# Usar una imagen base oficial de PHP con PHP-FPM
 FROM php:8.1-fpm
 
-# Set working directory
+# Establecer el directorio de trabajo
 WORKDIR /var/www
 
-# Install system dependencies
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -16,26 +16,26 @@ RUN apt-get update && apt-get install -y \
     vim \
     unzip \
     git \
-    curl
+    curl \
+    && docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Clear cache
+# Limpiar el caché de apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Copiar el archivo de configuración de Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy existing application directory contents
+# Copiar los archivos de la aplicación al contenedor
 COPY . /var/www
 
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www
+# Establecer permisos adecuados
+RUN chown -R www-data:www-data /var/www
 
-# Change current user to www
-USER www-data
+# Exponer el puerto 80
+EXPOSE 80
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
+# Comando por defecto para iniciar PHP-FPM
 CMD ["php-fpm"]
